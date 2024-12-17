@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from app import Base
-from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(Base):
     __tablename__ = "users"
@@ -12,9 +11,13 @@ class User(Base):
     password_hash = Column(String, index=True)
     birthday = Column(Date)
 
-    # def set_password(self, password):
-    #     self.password_hash = generate_password_hash(password)
+    messages = relationship("Message", back_populates="user")
 
-    # def check_password(self, password):
-    #     return check_password_hash(self.password_hash, password)
+class Message(Base):
+    __tablename__ = "messages"
 
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    user = relationship("User", back_populates="messages")

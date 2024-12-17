@@ -1,10 +1,10 @@
-from app.repositories.baserepository import BaseRepository
 from app.models import User
+from app import SessionLocal
 
-class UserRepository(BaseRepository):
+class UserRepository:
 
     def __init__(self):
-        super().__init__()
+        self.db = SessionLocal()
 
     def create(self, data: dict):
         user = User(

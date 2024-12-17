@@ -1,14 +1,15 @@
 from app.repositories.userrepository import UserRepository
-from app.schemas import UserBody, LoginBody
-from werkzeug.security import generate_password_hash, check_password_hash
+from app.schemas import RegistrationBody
+from werkzeug.security import generate_password_hash
 from fastapi import HTTPException
-from app import secutity, config
 
 class RegistrationService:
 
-    def registration(self, data: UserBody):
+    def registration(self, data: RegistrationBody):
+        if UserRepository().get_email(data.email):
+            raise HTTPException(status_code=409, detail="Пользователь с таким email уже существует")
         if not data.password1 == data.password2:
-            raise HTTPException(status_code=400)
+            raise HTTPException(status_code=400, detail="Пароли не совпадают")
 
         password_hash = generate_password_hash(data.password1)
         data_dict = data.model_dump(exclude={"password1", "password2"})
